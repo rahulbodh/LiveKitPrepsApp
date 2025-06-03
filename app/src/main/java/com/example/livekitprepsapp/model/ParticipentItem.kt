@@ -3,6 +3,7 @@ package com.example.livekitprepsapp.model
 import android.view.View
 import com.example.livekitprepsapp.R
 import com.example.livekitprepsapp.databinding.ParticipentItemBinding
+import com.example.livekitprepsapp.databinding.SpeakerViewBinding
 import com.xwray.groupie.databinding.BindableItem
 import com.xwray.groupie.databinding.GroupieViewHolder
 import io.livekit.android.room.Room

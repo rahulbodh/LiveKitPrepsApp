@@ -22,7 +22,9 @@ import com.example.livekitprepsapp.dialog.showAudioProcessorSwitchDialog
 import com.example.livekitprepsapp.dialog.showDebugMenuDialog
 import com.example.livekitprepsapp.dialog.showSelectAudioDeviceDialog
 import com.example.livekitprepsapp.model.ParticipantItem
+import com.example.livekitprepsapp.model.SpeakerItem
 import com.example.livekitprepsapp.model.StressTest
+import com.example.livekitprepsapp.viewModels.viewModelByFactory
 import com.xwray.groupie.GroupieAdapter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -87,11 +89,12 @@ class CallActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@CallActivity, LinearLayoutManager.HORIZONTAL, false)
             adapter = speakerAdapter
         }
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.primarySpeaker.collectLatest { speaker ->
                     val items = listOfNotNull(speaker)
-                        .map { participant -> ParticipantItem(viewModel.room, participant, speakerView = true) }
+                        .map { participant -> SpeakerItem(viewModel.room, participant) }
                     speakerAdapter.update(items)
                 }
             }

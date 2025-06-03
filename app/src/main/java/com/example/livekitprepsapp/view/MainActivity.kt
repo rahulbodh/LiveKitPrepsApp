@@ -1,16 +1,21 @@
 package com.example.livekitprepsapp.view
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.livekitprepsapp.R
 import com.example.livekitprepsapp.databinding.ActivityMainBinding
+import com.example.livekitprepsapp.model.StressTest
 import com.example.livekitprepsapp.viewModels.MainViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -96,6 +101,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestNeededPermissions() {
-        TODO("Not yet implemented")
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 100)
+        }
+
+        if(ContextCompat.checkSelfPermission(this , Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this , arrayOf(Manifest.permission.CAMERA) , 101)
+        }
+
     }
 }

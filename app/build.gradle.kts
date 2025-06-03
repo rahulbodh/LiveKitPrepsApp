@@ -78,4 +78,6 @@ dependencies {
     implementation (libs.groupie)
     implementation (libs.groupie.databinding)
 
+    implementation(libs.livekit.android)
+
 }
