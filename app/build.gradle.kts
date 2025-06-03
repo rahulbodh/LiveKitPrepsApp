@@ -45,4 +45,16 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+
+        implementation (libs.livekit.android)
+
+        // CameraX support with pinch to zoom, torch control, etc.
+        implementation (libs.livekit.android.camerax)
+
+        // Track processors, such as virtual background
+        implementation (libs.livekit.android.track.processors)
+
+        // Snapshots of the latest development version are available at:
+        // implementation "io.livekit:livekit-android:2.17.1-SNAPSHOT"
 }
