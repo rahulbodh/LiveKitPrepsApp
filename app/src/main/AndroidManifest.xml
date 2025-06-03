@@ -39,6 +39,14 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name=".java.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
             <service
                 android:name=".utils.ForegroundService"
                 android:foregroundServiceType="mediaPlayback|camera|microphone"

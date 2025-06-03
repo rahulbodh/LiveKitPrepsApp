@@ -22,6 +22,13 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityMainBinding
     private val viewModel by viewModels<MainViewModel>()
+    private val PERMISSION_REQUEST_CODE = 100
+    private val REQUIRED_PERMISSIONS = arrayOf(
+        Manifest.permission.RECORD_AUDIO,
+        Manifest.permission.CAMERA
+    )
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -92,22 +99,38 @@ class MainActivity : AppCompatActivity() {
 
         requestNeededPermissions()
 
+    }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            val deniedPermissions = permissions.zip(grantResults.toTypedArray())
+                .filter { it.second != PackageManager.PERMISSION_GRANTED }
+                .map { it.first }
 
-
-
-
-
+            if (deniedPermissions.isEmpty()) {
+                // All permissions granted
+            } else {
+                // Some permissions denied — show rationale or handle appropriately
+            }
+        }
     }
 
     private fun requestNeededPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 100)
+        val missingPermissions = REQUIRED_PERMISSIONS.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
         }
 
-        if(ContextCompat.checkSelfPermission(this , Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this , arrayOf(Manifest.permission.CAMERA) , 101)
+        if (missingPermissions.isNotEmpty()) {
+            ActivityCompat.requestPermissions(
+                this,
+                missingPermissions.toTypedArray(),
+                PERMISSION_REQUEST_CODE
+            )
         }
-
     }
 }
