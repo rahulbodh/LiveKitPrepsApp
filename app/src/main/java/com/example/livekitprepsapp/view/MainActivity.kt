@@ -1,4 +1,4 @@
-package com.example.livekitprepsapp
+package com.example.livekitprepsapp.view
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.livekitprepsapp.R
 import com.example.livekitprepsapp.databinding.ActivityMainBinding
 import com.example.livekitprepsapp.viewModels.MainViewModel
 

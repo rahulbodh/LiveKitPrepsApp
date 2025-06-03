@@ -1,4 +1,4 @@
-package com.example.livekitprepsapp.utils
+package com.example.livekitprepsapp.model
 
 
 import android.os.Parcelable

@@ -7,12 +7,13 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.media.projection.MediaProjectionManager
 import android.os.Build
-import androidx.annotation.OptIn
-import androidx.camera.camera2.interop.ExperimentalCamera2Interop
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.get
 import androidx.lifecycle.viewModelScope
-import com.example.livekitprepsapp.utils.StressTest
+import com.example.livekitprepsapp.model.StressTest
+import com.example.livekitprepsapp.utils.ForegroundService
 import io.livekit.android.AudioOptions
 import io.livekit.android.LiveKit
 import io.livekit.android.LiveKitOverrides
@@ -48,7 +49,6 @@ import kotlinx.coroutines.launch
 import livekit.org.webrtc.CameraXHelper
 import timber.log.Timber
 
-//@OptIn(ExperimentalCamera2Interop::class)
 class CallViewModel(
     val url: String,
     val token: String,
@@ -135,7 +135,6 @@ class CallViewModel(
                 cameraProvider = it
             }
         }
-
         viewModelScope.launch(Dispatchers.Default) {
             // Collect any errors.
             launch {

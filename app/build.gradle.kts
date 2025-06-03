@@ -71,4 +71,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     implementation (libs.timber)
+
+    implementation (libs.androidx.lifecycle.process)// or latest version
+
 }
