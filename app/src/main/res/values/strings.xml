@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">LiveKitPrepsApp</string>
+    <string name="url">url\n</string>
+    <string name="token">token</string>
+    <string name="e2ee_key_str">e2ee key\n</string>
+    <string name="e2ee_enabled_str">e2ee enable str</string>
+    <string name="connect">Connect</string>
+    <string name="save_values">Save Value</string>
+    <string name="reset_values">Reset Value</string>
 </resources>
