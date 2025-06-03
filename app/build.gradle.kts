@@ -36,6 +36,7 @@ android {
     }
 
     buildFeatures {
+        dataBinding = true
         viewBinding = true
     }
 }
@@ -73,5 +74,8 @@ dependencies {
     implementation (libs.timber)
 
     implementation (libs.androidx.lifecycle.process)// or latest version
+
+    implementation (libs.groupie)
+    implementation (libs.groupie.databinding)
 
 }

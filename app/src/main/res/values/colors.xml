@@ -3,4 +3,5 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="no_video_background">#00153C</color>
+    <color name="no_video_participant">#5A8BFF</color>
 </resources>
