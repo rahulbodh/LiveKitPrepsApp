@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id ("kotlin-parcelize")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -35,7 +35,7 @@ android {
         jvmTarget = "11"
     }
 
-    buildFeatures{
+    buildFeatures {
         viewBinding = true
     }
 }
@@ -52,14 +52,23 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
 
-        implementation (libs.livekit.android)
+    implementation(libs.livekit.android)
 
-        // CameraX support with pinch to zoom, torch control, etc.
-        implementation (libs.livekit.android.camerax)
+    // CameraX support with pinch to zoom, torch control, etc.
+    implementation(libs.livekit.android.camerax)
 
-        // Track processors, such as virtual background
-        implementation (libs.livekit.android.track.processors)
+    // Track processors, such as virtual background
+    implementation(libs.livekit.android.track.processors)
 
-        // Snapshots of the latest development version are available at:
-        // implementation "io.livekit:livekit-android:2.17.1-SNAPSHOT"
+    // Snapshots of the latest development version are available at:
+    // implementation "io.livekit:livekit-android:2.17.1-SNAPSHOT"
+
+    // ViewModel
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    // LiveData
+    implementation (libs.androidx.lifecycle.livedata.ktx)
+
+    implementation(libs.kotlinx.coroutines.android)
+
+    implementation (libs.timber)
 }
