@@ -7,11 +7,14 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.media.projection.MediaProjectionManager
 import android.os.Build
+import androidx.annotation.OptIn
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.get
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.util.Log
+import androidx.media3.common.util.UnstableApi
 import com.example.livekitprepsapp.model.StressTest
 import com.example.livekitprepsapp.utils.ForegroundService
 import io.livekit.android.AudioOptions
@@ -284,7 +287,10 @@ class CallViewModel(
      * Start a screen capture with the result intent from
      * [MediaProjectionManager.createScreenCaptureIntent]
      */
+    @OptIn(UnstableApi::class)
     fun startScreenCapture(mediaProjectionPermissionResultData: Intent) {
+        Timber.e("Starting screen capture")
+        Log.d("TAG", "Starting screen capture")
         val localParticipant = room.localParticipant
         viewModelScope.launch(Dispatchers.IO) {
             localParticipant.setScreenShareEnabled(true, ScreenCaptureParams(mediaProjectionPermissionResultData))
@@ -324,8 +330,10 @@ class CallViewModel(
         }
     }
 
+    @OptIn(UnstableApi::class)
     fun setCameraEnabled(enabled: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
+            Log.d("TAGY" , "is Camera enabled : $enabled")
             room.localParticipant.setCameraEnabled(enabled)
         }
     }

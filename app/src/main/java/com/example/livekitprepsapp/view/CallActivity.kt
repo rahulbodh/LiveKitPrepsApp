@@ -9,6 +9,7 @@ import com.example.livekitprepsapp.viewModels.CallViewModel
 import android.app.Activity
 import android.media.projection.MediaProjectionManager
 import android.os.Parcelable
+import android.util.Log
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.Toast
@@ -44,7 +45,10 @@ class CallActivity : AppCompatActivity() {
             stressTest = args.stressTest,
             application = application,
         )
+
     }
+
+
     private lateinit var binding: ActivityCallBinding
     private val screenCaptureIntentLauncher =
         registerForActivityResult(
@@ -209,6 +213,7 @@ class CallActivity : AppCompatActivity() {
             viewModel.error.collect {
                 if (it != null) {
                     Toast.makeText(this@CallActivity, "Error: $it", Toast.LENGTH_LONG).show()
+                    Log.e("TAGY", "Error : ${it.message.toString()}")
                     viewModel.dismissError()
                 }
             }

@@ -1,6 +1,7 @@
 package com.example.livekitprepsapp.viewModels
 
 import android.app.Application
+import android.media.session.MediaSession.Token
 import android.preference.PreferenceManager
 import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
@@ -49,7 +50,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         private const val PREFERENCES_KEY_E2EE_KEY = "e2ee_key"
 
         const val URL = "wss://emeet-app-pvosc3mg.livekit.cloud"
-        const val TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDkwMTYzNjcsImlzcyI6IkFQSWYzenZGVGJBcUVkIiwibmFtZSI6InRlc3RfdXNlciIsIm5iZiI6MTc0ODkyOTk2Nywic3ViIjoidGVzdF91c2VyIiwidmlkZW8iOnsicm9vbSI6InRlc3Rfcm9vbSIsInJvb21Kb2luIjp0cnVlfX0.3IDMZjd3Krr5m2nmZGlyf7RAVum4hYgisE8THG9VENw"
-        const val E2EE_KEY = "12345678"
+        const val TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDkwMzM1OTYsImlzcyI6IkFQSWYzenZGVGJBcUVkMiIsIm5hbWUiOiJ0ZXN0X3VzZXIiLCJuYmYiOjE3NDg5NDcxOTYsInN1YiI6InRlc3RfdXNlciIsInZpZGVvIjp7InJvb20iOiJ0ZXN0X3Jvb20iLCJyb29tSm9pbiI6dHJ1ZX19.hWI669xwCoUIMD2EMRqr83MUn56fK8BbWjLb-Ax60Uk"
+        const val E2EE_KEY = "test_room"
     }
 }
