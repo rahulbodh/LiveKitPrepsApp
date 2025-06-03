@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.livekitprepsapp.databinding.ActivityMainBinding
-import io.livekit.android.sample.MainViewModel
+import com.example.livekitprepsapp.viewModels.MainViewModel
 
 class MainActivity : AppCompatActivity() {
 

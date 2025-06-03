@@ -1,10 +1,9 @@
-package io.livekit.android.sample
+package com.example.livekitprepsapp.viewModels
 
 import android.app.Application
 import android.preference.PreferenceManager
 import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
-import io.livekit.android.BuildConfig
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
