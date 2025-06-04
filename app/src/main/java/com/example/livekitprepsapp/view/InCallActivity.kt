@@ -1,5 +1,6 @@
 package com.example.livekitprepsapp.view
 
+import android.content.Intent
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -12,7 +13,6 @@ import com.example.livekitprepsapp.databinding.ActivityInCallBinding
 
 class InCallActivity : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityInCallBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,22 +21,14 @@ class InCallActivity : AppCompatActivity() {
         binding = ActivityInCallBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
-
-        val navController = findNavController(R.id.nav_host_fragment_content_in_call)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
-
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show()
+        binding.acceptButton.setOnClickListener {
+           startActivity(Intent(this, CallActivity::class.java))
         }
-    }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_in_call)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
+        binding.rejectButton.setOnClickListener {
+            finish()
+        }
+
+
     }
 }

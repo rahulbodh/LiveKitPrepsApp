@@ -48,33 +48,38 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Accept Button -->
+
+    <!-- Reject Button -->
     <ImageButton
         android:id="@+id/acceptButton"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="64dp"
         android:background="@drawable/btn_accept_bg"
         android:contentDescription="Accept"
+        android:layout_marginStart="60dp"
         android:src="@drawable/concept"
-        app:layout_constraintBottom_margin="64dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/rejectButton"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toStartOf="@id/rejectButton"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/callTypeText"
+        app:layout_constraintVertical_bias="0.501" />
 
-    <!-- Reject Button -->
     <ImageButton
         android:id="@+id/rejectButton"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_marginBottom="30dp"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="64dp"
         android:background="@drawable/btn_reject_bg"
         android:contentDescription="Reject"
         android:src="@drawable/rejected"
-        app:layout_constraintBottom_margin="64dp"
+        android:layout_marginEnd="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/acceptButton" />
+        app:layout_constraintStart_toEndOf="@id/acceptButton"
+        app:layout_constraintTop_toBottomOf="@id/callTypeText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

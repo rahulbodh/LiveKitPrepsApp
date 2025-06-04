@@ -8,6 +8,8 @@ import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.livekitprepsapp.R
+import com.example.livekitprepsapp.broadcast.CallActionReceiver
+import com.example.livekitprepsapp.view.InCallActivity
 
 class ForegroundService : Service() {
 
@@ -39,34 +41,36 @@ class ForegroundService : Service() {
         if (isIncomingCall) {
             builder.setContentText("Incoming call from $callerName")
 
-            // Accept Button Intent
-            val acceptIntent = Intent(this, CallActionReceiver::class.java).apply {
-                action = ACTION_ACCEPT_CALL
-            }
-            val acceptPendingIntent = PendingIntent.getBroadcast(
-                this, 0, acceptIntent,
+            // Full-screen intent
+            val fullScreenIntent = Intent(this, InCallActivity::class.java)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .putExtra("launchedFromCall", true)
+
+            val acceptPendingIntent = PendingIntent.getActivity(
+                this,
+                0,
+                fullScreenIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
-            // Reject Button Intent
             val rejectIntent = Intent(this, CallActionReceiver::class.java).apply {
                 action = ACTION_REJECT_CALL
             }
+
             val rejectPendingIntent = PendingIntent.getBroadcast(
-                this, 1, rejectIntent,
+                this,
+                1,
+                rejectIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
-            builder.addAction(R.drawable.ic_call_white_24dp, "Accept", acceptPendingIntent)
-            builder.addAction(R.drawable.ic_call_end_white_24dp, "Reject", rejectPendingIntent)
+            builder.addAction(R.drawable.concept, "Accept", acceptPendingIntent)
+            builder.addAction(R.drawable.rejected, "Reject", rejectPendingIntent)
 
-            // Optional: Full-screen intent for lock screen
-            val fullScreenIntent = Intent(this, IncomingCallActivity::class.java)
-            val fullScreenPendingIntent = PendingIntent.getActivity(
-                this, 2, fullScreenIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-            builder.setFullScreenIntent(fullScreenPendingIntent, true)
+            // Attach full-screen intent (for lock screen)
+            builder.setFullScreenIntent(acceptPendingIntent, true)
 
         } else {
             builder.setContentText("You're in a call")
@@ -77,6 +81,7 @@ class ForegroundService : Service() {
 
         return START_NOT_STICKY
     }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel() {
