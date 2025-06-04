@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.livekitprepsapp.R
 import com.example.livekitprepsapp.databinding.ActivityMainBinding
 import com.example.livekitprepsapp.model.StressTest
+import com.example.livekitprepsapp.utils.ForegroundService
 import com.example.livekitprepsapp.viewModels.MainViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -45,6 +46,13 @@ class MainActivity : AppCompatActivity() {
         val tokenString = viewModel.getSavedToken()
         val e2EEOn = viewModel.getE2EEOptionsOn()
         val e2EEKey = viewModel.getSavedE2EEKey()
+
+        val serviceIntent = Intent(this, ForegroundService::class.java).apply {
+            putExtra("callerName", "Alice")
+            putExtra("isIncomingCall", true)
+        }
+        ContextCompat.startForegroundService(this, serviceIntent)
+
 
         binding.run {
             url.editText?.text = SpannableStringBuilder(urlString)
