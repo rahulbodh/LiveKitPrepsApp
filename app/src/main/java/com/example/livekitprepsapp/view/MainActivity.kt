@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.SpannableStringBuilder
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -18,6 +19,7 @@ import com.example.livekitprepsapp.databinding.ActivityMainBinding
 import com.example.livekitprepsapp.model.StressTest
 import com.example.livekitprepsapp.utils.ForegroundService
 import com.example.livekitprepsapp.viewModels.MainViewModel
+import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : AppCompatActivity() {
 
@@ -105,10 +107,28 @@ class MainActivity : AppCompatActivity() {
                 ).show()
             }
         }
-
+        getFCMToken()
         requestNeededPermissions()
 
     }
+
+
+    fun getFCMToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("FCM", "Fetching FCM registration token failed", task.exception)
+                return@addOnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+            Log.d("FCM", "Current FCM Token: $token")
+
+            // You would typically send this token to your backend server now
+            // sendRegistrationToServer(token)
+        }
+    }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
