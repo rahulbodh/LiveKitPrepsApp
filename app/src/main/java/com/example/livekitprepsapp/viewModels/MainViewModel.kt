@@ -50,7 +50,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         private const val PREFERENCES_KEY_E2EE_KEY = "e2ee_key"
 
         const val URL = "wss://emeet-app-pvosc3mg.livekit.cloud"
-        const val TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDkwMzM1OTYsImlzcyI6IkFQSWYzenZGVGJBcUVkMiIsIm5hbWUiOiJ0ZXN0X3VzZXIiLCJuYmYiOjE3NDg5NDcxOTYsInN1YiI6InRlc3RfdXNlciIsInZpZGVvIjp7InJvb20iOiJ0ZXN0X3Jvb20iLCJyb29tSm9pbiI6dHJ1ZX19.hWI669xwCoUIMD2EMRqr83MUn56fK8BbWjLb-Ax60Uk"
+        const val TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDkyMDg3MzIsImlzcyI6IkFQSWYzenZGVGJBcUVkMiIsIm5hbWUiOiJ0ZXN0X3VzZXIyIiwibmJmIjoxNzQ5MTIyMzMyLCJzdWIiOiJ0ZXN0X3VzZXIyIiwidmlkZW8iOnsicm9vbSI6InRlc3Rfcm9vbSIsInJvb21Kb2luIjp0cnVlfX0.7DZrjFJQviihTbjjY5053Nenc4PAMm3V6S6m137nOUo"
         const val E2EE_KEY = "test_room"
     }
 }
