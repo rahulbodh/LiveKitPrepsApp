@@ -138,71 +138,6 @@ class CallActivity : AppCompatActivity() {
 
         binding.flipCamera.setOnClickListener { viewModel.flipCamera() }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.screenshareEnabled.collect { enabled ->
-                    binding.screenShare.setOnClickListener {
-                        if (enabled) {
-                            viewModel.stopScreenCapture()
-                        } else {
-                            requestMediaProjection()
-                        }
-                    }
-                    binding.screenShare.setImageResource(
-                        if (enabled) {
-                            R.drawable.baseline_cast_connected_24
-                        } else {
-                            R.drawable.baseline_cast_24
-                        },
-                    )
-                }
-            }
-        }
-
-        binding.message.setOnClickListener {
-            val editText = EditText(this)
-            AlertDialog.Builder(this)
-                .setTitle("Send Message")
-                .setView(editText)
-                .setPositiveButton("Send") { dialog, _ ->
-                    viewModel.sendData(editText.text?.toString() ?: "")
-                }
-                .setNegativeButton("Cancel") { _, _ -> }
-                .create()
-                .show()
-        }
-
-        viewModel.enhancedNsEnabled.observe(this) { enabled ->
-            binding.enhancedNs.visibility = if (enabled) {
-                android.view.View.VISIBLE
-            } else {
-                android.view.View.GONE
-            }
-        }
-
-        binding.enhancedNs.setOnClickListener {
-            showAudioProcessorSwitchDialog(viewModel)
-        }
-
-        binding.exit.setOnClickListener { finish() }
-
-        // Controls row 2
-        binding.audioSelect.setOnClickListener {
-            showSelectAudioDeviceDialog(viewModel)
-        }
-        lifecycleScope.launchWhenCreated {
-            viewModel.permissionAllowed.collect { allowed ->
-                val resource = if (allowed) R.drawable.account_cancel_outline else R.drawable.account_cancel
-                binding.permissions.setImageResource(resource)
-            }
-        }
-        binding.permissions.setOnClickListener {
-            viewModel.toggleSubscriptionPermissions()
-        }
-
-        binding.debugMenu.setOnClickListener {
-            showDebugMenuDialog(viewModel)
-        }
     }
 
 
@@ -226,15 +161,7 @@ class CallActivity : AppCompatActivity() {
         }
     }
 
-    private fun requestMediaProjection() {
-        val mediaProjectionManager =
-            getSystemService(MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-        screenCaptureIntentLauncher.launch(mediaProjectionManager.createScreenCaptureIntent())
-    }
-
     override fun onDestroy() {
-        binding.audienceRow.adapter = null
-        binding.speakerView.adapter = null
         super.onDestroy()
     }
 
