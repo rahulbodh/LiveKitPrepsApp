@@ -3,6 +3,7 @@ package com.example.livekitprepsapp.utils
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
 import androidx.annotation.RequiresApi
@@ -97,17 +98,23 @@ class ForegroundService : Service() {
 
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun createNotificationChannel() {
-        val channel = NotificationChannel(
-            DEFAULT_CHANNEL_ID,
-            "Call Notifications",
-            NotificationManager.IMPORTANCE_HIGH
-        ).apply {
-            description = "Used for call notifications"
-            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+    fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                DEFAULT_CHANNEL_ID,
+                "LiveKit Calls",
+                NotificationManager.IMPORTANCE_HIGH // Must be HIGH for heads-up
+            ).apply {
+                description = "Channel for incoming LiveKit calls"
+                enableLights(true)
+                lightColor = Color.RED
+                enableVibration(true)
+                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            }
+
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
         }
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
     }
+
 }
