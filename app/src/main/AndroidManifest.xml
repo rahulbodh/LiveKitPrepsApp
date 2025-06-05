@@ -19,7 +19,6 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -30,6 +29,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LiveKitPrepsApp"
         tools:targetApi="31">
+        <activity
+            android:name=".view.ConnectCallActivity"
+            android:exported="false" />
         <activity
             android:name=".view.InCallActivity"
             android:exported="true"
@@ -60,9 +62,10 @@
             android:foregroundServiceType="remoteMessaging"
             tools:ignore="ForegroundServicePermission" />
 
-        <receiver android:name=".broadcast.CallActionReceiver"   android:exported="true"
+        <receiver
+            android:name=".broadcast.CallActionReceiver"
+            android:exported="true"
             android:permission="TODO" />
-
     </application>
 
 </manifest>

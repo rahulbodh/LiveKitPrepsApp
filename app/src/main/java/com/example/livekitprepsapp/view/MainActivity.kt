@@ -64,18 +64,20 @@ class MainActivity : AppCompatActivity() {
 
 
             connectButton.setOnClickListener {
-                val intent = Intent(this@MainActivity, CallActivity::class.java).apply {
-                    putExtra(
-                        CallActivity.KEY_ARGS,
-                        CallActivity.BundleArgs(
-                            url = url.editText?.text.toString(),
-                            token = token.editText?.text.toString(),
-                            e2eeOn = e2eeEnabled.isChecked,
-                            e2eeKey = e2eeKey.editText?.text.toString(),
-                            stressTest = StressTest.None,
-                        ),
-                    )
-                }
+//                val intent = Intent(this@MainActivity, CallActivity::class.java).apply {
+//                    putExtra(
+//                        CallActivity.KEY_ARGS,
+//                        CallActivity.BundleArgs(
+//                            url = url.editText?.text.toString(),
+//                            token = token.editText?.text.toString(),
+//                            e2eeOn = e2eeEnabled.isChecked,
+//                            e2eeKey = e2eeKey.editText?.text.toString(),
+//                            stressTest = StressTest.None,
+//                        ),
+//                    )
+//                }
+
+                val intent = Intent(this@MainActivity, ConnectCallActivity::class.java)
 
                 startActivity(intent)
             }
