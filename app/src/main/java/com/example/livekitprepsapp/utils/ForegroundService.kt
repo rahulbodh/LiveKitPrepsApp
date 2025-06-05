@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.livekitprepsapp.R
@@ -27,6 +29,8 @@ class ForegroundService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val callerName = intent?.getStringExtra("callerName") ?: "Unknown"
         val isIncomingCall = intent?.getBooleanExtra("isIncomingCall", false) ?: false
+
+        Log.d("ForegroundService", "onStartCommand: $callerName")
 
         createNotificationChannel()
 
@@ -90,8 +94,14 @@ class ForegroundService : Service() {
                 )
             )
 
-        val notification = builder.build()
-        startForeground(DEFAULT_NOTIFICATION_ID, notification)
+        Handler().postDelayed({
+            val notification = builder.build()
+            notification.flags = notification.flags or Notification.FLAG_ONGOING_EVENT
+            startForeground(DEFAULT_NOTIFICATION_ID, notification)
+            Log.d("ForegroundService", "Notification shoot")
+        }, 20000)
+
+
 
         return START_NOT_STICKY
     }

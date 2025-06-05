@@ -48,11 +48,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             action = "ACTION_START_CALL_SERVICE"
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent)
-        } else {
-            startService(intent)
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            startForegroundService(intent)
+//        } else {
+//            startService(intent)
+//        }
 
         when (data["type"]) {
             "CALL_INVITE" -> {
