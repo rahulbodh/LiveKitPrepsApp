@@ -22,65 +22,79 @@ class ForegroundService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val callerName = intent?.getStringExtra("callerName") ?: "Unknown"
         val isIncomingCall = intent?.getBooleanExtra("isIncomingCall", false) ?: false
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel()
-        }
+        createNotificationChannel()
 
-        val builder = NotificationCompat.Builder(this, DEFAULT_CHANNEL_ID)
+        val person = Person.Builder()
+            .setName(callerName)
+            .setImportant(true)
+            .build()
+
+        // Answer PendingIntent
+        val answerIntent = Intent(this, CallActionReceiver::class.java).apply {
+            action = "ACTION_ANSWER_CALL"
+        }
+        val answerPendingIntent = PendingIntent.getBroadcast(
+            this,
+            0,
+            answerIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        // Decline PendingIntent
+        val declineIntent = Intent(this, CallActionReceiver::class.java).apply {
+            action = "ACTION_DECLINE_CALL"
+        }
+        val declinePendingIntent = PendingIntent.getBroadcast(
+            this,
+            1,
+            declineIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        // Full-screen intent for incoming call
+        val fullScreenIntent = Intent(this, InCallActivity::class.java)
+            .setFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP or
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP
+            )
+            .putExtra("launchedFromCall", true)
+        val fullScreenPendingIntent = PendingIntent.getActivity(
+            this,
+            2,
+            fullScreenIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        // Use Notification.Builder (not NotificationCompat)
+        val builder = Notification.Builder(this, DEFAULT_CHANNEL_ID)
             .setSmallIcon(R.drawable.banner_dark)
             .setContentTitle("LiveKit Call")
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setCategory(NotificationCompat.CATEGORY_CALL)
+            .setContentText(if (isIncomingCall) "Incoming call from $callerName" else "You're in a call")
+            .setCategory(Notification.CATEGORY_CALL)
             .setOngoing(true)
             .setAutoCancel(false)
-
-        if (isIncomingCall) {
-            builder.setContentText("Incoming call from $callerName")
-
-            // Full-screen intent
-            val fullScreenIntent = Intent(this, InCallActivity::class.java)
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or
-                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                        Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .putExtra("launchedFromCall", true)
-
-            val acceptPendingIntent = PendingIntent.getActivity(
-                this,
-                0,
-                fullScreenIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            .setPriority(Notification.PRIORITY_HIGH)
+            .setFullScreenIntent(fullScreenPendingIntent, true)
+            .setStyle(
+                Notification.CallStyle.forIncomingCall(
+                    person,
+                    declinePendingIntent,
+                    answerPendingIntent
+                )
             )
-
-            val rejectIntent = Intent(this, CallActionReceiver::class.java).apply {
-                action = ACTION_REJECT_CALL
-            }
-
-            val rejectPendingIntent = PendingIntent.getBroadcast(
-                this,
-                1,
-                rejectIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-
-            builder.addAction(R.drawable.concept, "Accept", acceptPendingIntent)
-            builder.addAction(R.drawable.rejected, "Reject", rejectPendingIntent)
-
-            // Attach full-screen intent (for lock screen)
-            builder.setFullScreenIntent(acceptPendingIntent, true)
-
-        } else {
-            builder.setContentText("You're in a call")
-        }
 
         val notification = builder.build()
         startForeground(DEFAULT_NOTIFICATION_ID, notification)
 
         return START_NOT_STICKY
     }
+
 
 
     @RequiresApi(Build.VERSION_CODES.O)
