@@ -50,7 +50,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         private const val PREFERENCES_KEY_E2EE_KEY = "e2ee_key"
 
         const val URL = "wss://emeet-app-pvosc3mg.livekit.cloud"
-        const val TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDkyMTEzMDgsImlzcyI6IkFQSWYzenZGVGJBcUVkMiIsIm5hbWUiOiJ0ZXN0X3VzZXIxIiwibmJmIjoxNzQ5MTI0OTA4LCJzdWIiOiJ0ZXN0X3VzZXIxIiwidmlkZW8iOnsicm9vbSI6InRlc3Rfcm9vbSIsInJvb21Kb2luIjp0cnVlfX0.XWRrA-mJAUJeB0_L9vVdVET7O7fk2OcZh9XzwFtlqCs"
+        const val TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDkyNzgyMDUsImlzcyI6IkFQSWYzenZGVGJBcUVkMiIsIm5hbWUiOiJ0ZXN0X3VzZXIzIiwibmJmIjoxNzQ5MTkxODA1LCJzdWIiOiJ0ZXN0X3VzZXIzIiwidmlkZW8iOnsicm9vbSI6InRlc3Rfcm9vbSIsInJvb21Kb2luIjp0cnVlfX0.YUFFSs_5seXRpqUOmW3EHOxCNCxyO9fDYWP0BgGX2A4"
+//        const val TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDkyMTEzMDgsImlzcyI6IkFQSWYzenZGVGJBcUVkMiIsIm5hbWUiOiJ0ZXN0X3VzZXIxIiwibmJmIjoxNzQ5MTI0OTA4LCJzdWIiOiJ0ZXN0X3VzZXIxIiwidmlkZW8iOnsicm9vbSI6InRlc3Rfcm9vbSIsInJvb21Kb2luIjp0cnVlfX0.XWRrA-mJAUJeB0_L9vVdVET7O7fk2OcZh9XzwFtlqCs"
 //        const val TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDkyMDg3MzIsImlzcyI6IkFQSWYzenZGVGJBcUVkMiIsIm5hbWUiOiJ0ZXN0X3VzZXIyIiwibmJmIjoxNzQ5MTIyMzMyLCJzdWIiOiJ0ZXN0X3VzZXIyIiwidmlkZW8iOnsicm9vbSI6InRlc3Rfcm9vbSIsInJvb21Kb2luIjp0cnVlfX0.7DZrjFJQviihTbjjY5053Nenc4PAMm3V6S6m137nOUo"
         const val E2EE_KEY = "test_room"
     }

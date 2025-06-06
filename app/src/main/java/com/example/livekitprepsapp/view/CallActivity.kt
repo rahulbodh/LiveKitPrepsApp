@@ -1,13 +1,8 @@
 package com.example.livekitprepsapp.view
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.example.livekitprepsapp.R
-import com.example.livekitprepsapp.databinding.ActivityCallBinding
-import com.example.livekitprepsapp.viewModels.CallViewModel
-
 import android.app.Activity
 import android.media.projection.MediaProjectionManager
+import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
 import android.view.WindowManager
@@ -15,18 +10,27 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.livekitprepsapp.R
+import com.example.livekitprepsapp.databinding.ActivityCallBinding
 import com.example.livekitprepsapp.dialog.showAudioProcessorSwitchDialog
 import com.example.livekitprepsapp.dialog.showDebugMenuDialog
 import com.example.livekitprepsapp.dialog.showSelectAudioDeviceDialog
 import com.example.livekitprepsapp.model.ParticipantItem
 import com.example.livekitprepsapp.model.SpeakerItem
 import com.example.livekitprepsapp.model.StressTest
+import com.example.livekitprepsapp.viewModels.CallViewModel
 import com.example.livekitprepsapp.viewModels.viewModelByFactory
 import com.xwray.groupie.GroupieAdapter
+import io.livekit.android.room.participant.LocalParticipant
+import io.livekit.android.room.participant.Participant
+import io.livekit.android.room.participant.RemoteParticipant
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -36,7 +40,6 @@ class CallActivity : AppCompatActivity() {
     private val viewModel: CallViewModel by viewModelByFactory {
         val args = intent.getParcelableExtra<BundleArgs>(KEY_ARGS)
             ?: throw NullPointerException("args is null!")
-
         CallViewModel(
             url = args.url,
             token = args.token,
@@ -45,9 +48,7 @@ class CallActivity : AppCompatActivity() {
             stressTest = args.stressTest,
             application = application,
         )
-
     }
-
 
     private lateinit var binding: ActivityCallBinding
     private val screenCaptureIntentLauncher =
@@ -77,16 +78,6 @@ class CallActivity : AppCompatActivity() {
             adapter = audienceAdapter
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.participants
-                    .collect { participants ->
-                        val items = participants.map { participant -> ParticipantItem(viewModel.room, participant) }
-                        audienceAdapter.update(items)
-                    }
-            }
-        }
-
         // speaker view setup
         val speakerAdapter = GroupieAdapter()
         binding.speakerView.apply {
@@ -96,13 +87,42 @@ class CallActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.primarySpeaker.collectLatest { speaker ->
-                    val items = listOfNotNull(speaker)
-                        .map { participant -> SpeakerItem(viewModel.room, participant) }
-                    speakerAdapter.update(items)
+                viewModel.participants.collect { participants ->
+                    Log.d("Participants", participants.toString())
+
+                    val localParticipant = participants.filterIsInstance<LocalParticipant>().firstOrNull()
+                    val remoteParticipant = participants.filterIsInstance<Participant>()
+                        .filterNot { it is LocalParticipant }
+                        .firstOrNull()
+
+                    Log.d("Participant", "LocalParticipant: $localParticipant")
+                    Log.d("Participant", "RemoteParticipant: $remoteParticipant")
+
+                    val audienceItems = listOfNotNull(localParticipant).map {
+                        ParticipantItem(viewModel.room, it)
+                    }
+                    audienceAdapter.update(audienceItems)
+
+                    val speakerItems = listOfNotNull(remoteParticipant).map {
+                        ParticipantItem(viewModel.room, it)
+                    }
+                    speakerAdapter.update(speakerItems)
                 }
             }
         }
+
+
+
+//
+//        lifecycleScope.launch {
+//            repeatOnLifecycle(Lifecycle.State.CREATED) {
+//                viewModel.primarySpeaker.collectLatest { speaker ->
+//                    val items = listOfNotNull(speaker)
+//                        .map { participant -> SpeakerItem(viewModel.room, participant) }
+//                    speakerAdapter.update(items)
+//                }
+//            }
+//        }
 
         // Controls setup
         lifecycleScope.launch {
@@ -110,27 +130,20 @@ class CallActivity : AppCompatActivity() {
                 viewModel.cameraEnabled.collect { enabled ->
                     binding.camera.setOnClickListener { viewModel.setCameraEnabled(!enabled) }
                     binding.camera.setImageResource(
-                        if (enabled) {
-                            R.drawable.outline_videocam_24
-                        } else {
-                            R.drawable.outline_videocam_off_24
-                        },
+                        if (enabled) R.drawable.outline_videocam_24 else R.drawable.outline_videocam_off_24
                     )
                     binding.flipCamera.isEnabled = enabled
                 }
             }
         }
 
+        // Microphone control
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.micEnabled.collect { enabled ->
                     binding.mic.setOnClickListener { viewModel.setMicEnabled(!enabled) }
                     binding.mic.setImageResource(
-                        if (enabled) {
-                            R.drawable.outline_mic_24
-                        } else {
-                            R.drawable.outline_mic_off_24
-                        },
+                        if (enabled) R.drawable.outline_mic_24 else R.drawable.outline_mic_off_24
                     )
                 }
             }
@@ -138,17 +151,23 @@ class CallActivity : AppCompatActivity() {
 
         binding.flipCamera.setOnClickListener { viewModel.flipCamera() }
 
+        // Audio select
+        binding.audioSelect.setOnClickListener {
+            showSelectAudioDeviceDialog(viewModel)
+        }
+
+        // Exit call
+        binding.exit.setOnClickListener {
+            finish()
+        }
     }
-
-
 
     override fun onResume() {
         super.onResume()
         lifecycleScope.launchWhenResumed {
             viewModel.error.collect {
-                if (it != null) {
+                it?.let {
                     Toast.makeText(this@CallActivity, "Error: $it", Toast.LENGTH_LONG).show()
-                    Log.e("TAGY", "Error : ${it.message.toString()}")
                     viewModel.dismissError()
                 }
             }
@@ -161,7 +180,15 @@ class CallActivity : AppCompatActivity() {
         }
     }
 
+    private fun requestMediaProjection() {
+        val mediaProjectionManager =
+            getSystemService(MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+        screenCaptureIntentLauncher.launch(mediaProjectionManager.createScreenCaptureIntent())
+    }
+
     override fun onDestroy() {
+        binding.audienceRow.adapter = null
+        binding.speakerView.adapter = null
         super.onDestroy()
     }
 
