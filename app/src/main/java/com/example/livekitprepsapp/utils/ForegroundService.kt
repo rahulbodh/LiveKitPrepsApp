@@ -3,6 +3,7 @@ package com.example.livekitprepsapp.utils
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.graphics.Color
 import android.os.Build
 import android.os.Handler
@@ -94,12 +95,10 @@ class ForegroundService : Service() {
                 )
             )
 
-        Handler().postDelayed({
             val notification = builder.build()
             notification.flags = notification.flags or Notification.FLAG_ONGOING_EVENT
-            startForeground(DEFAULT_NOTIFICATION_ID, notification)
+            startForeground(DEFAULT_NOTIFICATION_ID, notification  , ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL)
             Log.d("ForegroundService", "Notification shoot")
-        }, 20000)
 
 
 

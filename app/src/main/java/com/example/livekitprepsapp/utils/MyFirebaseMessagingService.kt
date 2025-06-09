@@ -13,7 +13,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.livekitprepsapp.R
 import com.example.livekitprepsapp.broadcast.CallActionReceiver
-import com.example.livekitprepsapp.utils.ForegroundService.Companion.DEFAULT_CHANNEL_ID
 import com.example.livekitprepsapp.view.CallActivity
 import com.example.livekitprepsapp.view.InCallActivity
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -37,7 +36,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         val data = remoteMessage.data
         Timber.tag("FCM").d("Received message: $data")
-        Log.d("FCM", "Received message: $data")
+        Log.d("FirebaseMessagingService", "Received message: $data")
 
         val intent = Intent(this, ForegroundService::class.java).apply {
             putExtra("callerName", data["callerName"])
@@ -48,11 +47,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             action = "ACTION_START_CALL_SERVICE"
         }
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            startForegroundService(intent)
-//        } else {
-//            startService(intent)
-//        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+        } else {
+            startService(intent)
+        }
 
         when (data["type"]) {
             "CALL_INVITE" -> {

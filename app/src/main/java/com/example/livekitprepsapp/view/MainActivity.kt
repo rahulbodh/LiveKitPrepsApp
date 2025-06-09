@@ -49,11 +49,11 @@ class MainActivity : AppCompatActivity() {
         val e2EEOn = viewModel.getE2EEOptionsOn()
         val e2EEKey = viewModel.getSavedE2EEKey()
 
-        val serviceIntent = Intent(this, ForegroundService::class.java).apply {
-            putExtra("callerName", "Alice")
-            putExtra("isIncomingCall", true)
-        }
-        ContextCompat.startForegroundService(this, serviceIntent)
+//        val serviceIntent = Intent(this, ForegroundService::class.java).apply {
+//            putExtra("callerName", "Alice")
+//            putExtra("isIncomingCall", true)
+//        }
+//        ContextCompat.startForegroundService(this, serviceIntent)
 
 
         binding.run {
