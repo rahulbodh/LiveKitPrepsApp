@@ -21,6 +21,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
 
     <application
@@ -65,6 +66,8 @@
             android:exported="false"
             android:foregroundServiceType="phoneCall"
             tools:ignore="ForegroundServicePermission" />
+
+        <receiver android:name=".utils.BackgroundFCMReceiver"/>
 
         <receiver
             android:name=".broadcast.CallActionReceiver"
