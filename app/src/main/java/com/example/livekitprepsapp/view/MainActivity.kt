@@ -16,6 +16,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.livekitprepsapp.R
 import com.example.livekitprepsapp.databinding.ActivityMainBinding
+import com.example.livekitprepsapp.model.CallArgs
 import com.example.livekitprepsapp.model.StressTest
 import com.example.livekitprepsapp.utils.ForegroundService
 import com.example.livekitprepsapp.viewModels.MainViewModel
@@ -23,7 +24,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding : ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
     private val viewModel by viewModels<MainViewModel>()
     private val PERMISSION_REQUEST_CODE = 100
     private val REQUIRED_PERMISSIONS = arrayOf(
@@ -64,21 +65,11 @@ class MainActivity : AppCompatActivity() {
 
 
             connectButton.setOnClickListener {
-//                val intent = Intent(this@MainActivity, CallActivity::class.java).apply {
-//                    putExtra(
-//                        CallActivity.KEY_ARGS,
-//                        CallActivity.BundleArgs(
-//                            url = url.editText?.text.toString(),
-//                            token = token.editText?.text.toString(),
-//                            e2eeOn = e2eeEnabled.isChecked,
-//                            e2eeKey = e2eeKey.editText?.text.toString(),
-//                            stressTest = StressTest.None,
-//                        ),
-//                    )
-//                }
-
-                val intent = Intent(this@MainActivity, ConnectCallActivity::class.java)
-
+                val args = CallArgs("audio", "3rsdlkfjsldf", "room_1")
+                val intent = Intent(this@MainActivity, CallingFlowActivity::class.java)
+                    .putExtra(
+                        "args", args
+                    )
                 startActivity(intent)
             }
 

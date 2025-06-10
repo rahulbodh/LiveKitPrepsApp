@@ -59,7 +59,7 @@
         android:background="@drawable/btn_accept_bg"
         android:contentDescription="Accept"
         android:layout_marginStart="60dp"
-        android:src="@drawable/concept"
+        android:src="@drawable/video"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/rejectButton"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
