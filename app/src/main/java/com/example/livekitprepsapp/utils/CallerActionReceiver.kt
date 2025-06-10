@@ -8,11 +8,13 @@ import android.content.Intent
 import android.util.Log
 import com.example.livekitprepsapp.utils.ForegroundService
 import com.example.livekitprepsapp.view.InCallActivity
+import io.livekit.android.LiveKit
+import io.livekit.android.room.Room
 import timber.log.Timber
 
 class CallActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        Timber.tag("CallActionReceiver").d("onReceive: ${intent.action}")
+        Log.d("CallActionReceiver","onReceive: ${intent.action}")
         when (intent.action) {
             ForegroundService.ACTION_ACCEPT_CALL -> {
                 // Create and launch PendingIntent
@@ -35,6 +37,11 @@ class CallActionReceiver : BroadcastReceiver() {
                 }
             }
             ForegroundService.ACTION_REJECT_CALL -> {
+                val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                manager.cancel(ForegroundService.DEFAULT_NOTIFICATION_ID)
+            }
+
+            ForegroundService.ACTION_HANG_UP -> {
                 val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 manager.cancel(ForegroundService.DEFAULT_NOTIFICATION_ID)
             }

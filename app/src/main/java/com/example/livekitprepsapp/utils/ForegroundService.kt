@@ -22,6 +22,7 @@ class ForegroundService : Service() {
         const val DEFAULT_CHANNEL_ID = "livekit_example_foreground"
         const val ACTION_ACCEPT_CALL = "com.example.livekitprepsapp.ACCEPT_CALL"
         const val ACTION_REJECT_CALL = "com.example.livekitprepsapp.REJECT_CALL"
+        const val ACTION_HANG_UP = "com.example.livekitperpsapp.HANG_UP"
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -42,7 +43,7 @@ class ForegroundService : Service() {
 
         // Answer PendingIntent
         val answerIntent = Intent(this, CallActionReceiver::class.java).apply {
-            action = "ACTION_ANSWER_CALL"
+            action = ACTION_ACCEPT_CALL
         }
         val answerPendingIntent = PendingIntent.getBroadcast(
             this,
@@ -53,7 +54,7 @@ class ForegroundService : Service() {
 
         // Decline PendingIntent
         val declineIntent = Intent(this, CallActionReceiver::class.java).apply {
-            action = "ACTION_DECLINE_CALL"
+            action = ACTION_REJECT_CALL
         }
         val declinePendingIntent = PendingIntent.getBroadcast(
             this,
@@ -61,6 +62,16 @@ class ForegroundService : Service() {
             declineIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+
+        val hangUpIntent = Intent(this , CallActionReceiver::class.java).apply {
+            action = ACTION_HANG_UP
+        }
+
+        val hangUpPendingIntent = PendingIntent.getBroadcast(
+            this,
+            2,
+            hangUpIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         // Full-screen intent for incoming call
         val fullScreenIntent = Intent(this, InCallActivity::class.java)
@@ -92,6 +103,12 @@ class ForegroundService : Service() {
                     person,
                     declinePendingIntent,
                     answerPendingIntent
+                )
+            )
+            .setStyle(
+                Notification.CallStyle.forOngoingCall(
+                    person,
+                    hangUpPendingIntent
                 )
             )
 
