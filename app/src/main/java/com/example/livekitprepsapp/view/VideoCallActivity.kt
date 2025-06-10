@@ -1,25 +1,20 @@
 package com.example.livekitprepsapp.view
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.media.projection.MediaProjectionManager
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.livekitprepsapp.R
-import com.example.livekitprepsapp.databinding.FragmentVideoCallBinding
+import com.example.livekitprepsapp.databinding.ActivityCallBinding
 import com.example.livekitprepsapp.dialog.showSelectAudioDeviceDialog
 import com.example.livekitprepsapp.model.ParticipantItem
 import com.example.livekitprepsapp.model.StressTest
@@ -28,19 +23,30 @@ import com.example.livekitprepsapp.viewModels.viewModelByFactory
 import com.xwray.groupie.GroupieAdapter
 import io.livekit.android.room.participant.LocalParticipant
 import io.livekit.android.room.participant.Participant
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
-class VideoCallFragment : BaseCallFragment() {
+class VideoCallActivity : AppCompatActivity() {
 
-    private var _binding: FragmentVideoCallBinding? = null
-    private val binding get() = _binding!!
+    private val viewModel: CallViewModel by viewModelByFactory {
+        val args = intent.getParcelableExtra<BundleArgs>(KEY_ARGS)
+            ?: throw NullPointerException("args is null!")
+        CallViewModel(
+            url = args.url,
+            token = args.token,
+            e2ee = args.e2eeOn,
+            e2eeKey = args.e2eeKey,
+            stressTest = args.stressTest,
+            application = application,
+            videoCall = true
+        )
+    }
 
-    private lateinit var viewModel: CallViewModel
-
+    private lateinit var binding: ActivityCallBinding
     private val screenCaptureIntentLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult(),
+        ) { result ->
             val resultCode = result.resultCode
             val data = result.data
             if (resultCode != Activity.RESULT_OK || data == null) {
@@ -49,52 +55,40 @@ class VideoCallFragment : BaseCallFragment() {
             viewModel.startScreenCapture(data)
         }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
-        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        _binding = FragmentVideoCallBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    @androidx.camera.camera2.interop.ExperimentalCamera2Interop
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        binding = ActivityCallBinding.inflate(layoutInflater)
 
-    @SuppressLint("UnsafeRepeatOnLifecycleDetector")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        setContentView(binding.root)
 
-        val args = requireArguments().getParcelable<BundleArgs>("args")
-            ?: throw IllegalArgumentException("args are required but were not provided")
-
-        viewModel = viewModelByFactory {
-            CallViewModel(
-                url = args.url,
-                token = args.token,
-                e2ee = args.e2eeOn,
-                e2eeKey = args.e2eeKey,
-                stressTest = args.stressTest,
-                application = requireActivity().application,
-                videoCall = true
-            )
-        }.value
-
+        // Audience row setup
         val audienceAdapter = GroupieAdapter()
         binding.audienceRow.apply {
-            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = LinearLayoutManager(this@VideoCallActivity, LinearLayoutManager.HORIZONTAL, false)
             adapter = audienceAdapter
         }
 
+        // speaker view setup
         val speakerAdapter = GroupieAdapter()
         binding.speakerView.apply {
-            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = LinearLayoutManager(this@VideoCallActivity, LinearLayoutManager.HORIZONTAL, false)
             adapter = speakerAdapter
         }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.participants.collect { participants ->
+                    Log.d("Participants", participants.toString())
+
                     val localParticipant = participants.filterIsInstance<LocalParticipant>().firstOrNull()
                     val remoteParticipant = participants.filterIsInstance<Participant>()
                         .filterNot { it is LocalParticipant }
                         .firstOrNull()
+
+                    Log.d("Participant", "LocalParticipant: $localParticipant")
+                    Log.d("Participant", "RemoteParticipant: $remoteParticipant")
 
                     val audienceItems = listOfNotNull(localParticipant).map {
                         ParticipantItem(viewModel.room, it)
@@ -109,6 +103,20 @@ class VideoCallFragment : BaseCallFragment() {
             }
         }
 
+
+
+//
+//        lifecycleScope.launch {
+//            repeatOnLifecycle(Lifecycle.State.CREATED) {
+//                viewModel.primarySpeaker.collectLatest { speaker ->
+//                    val items = listOfNotNull(speaker)
+//                        .map { participant -> SpeakerItem(viewModel.room, participant) }
+//                    speakerAdapter.update(items)
+//                }
+//            }
+//        }
+
+        // Controls setup
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.cameraEnabled.collect { enabled ->
@@ -121,6 +129,7 @@ class VideoCallFragment : BaseCallFragment() {
             }
         }
 
+        // Microphone control
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.micEnabled.collect { enabled ->
@@ -133,8 +142,16 @@ class VideoCallFragment : BaseCallFragment() {
         }
 
         binding.flipCamera.setOnClickListener { viewModel.flipCamera() }
-        binding.audioSelect.setOnClickListener { showSelectAudioDeviceDialog(viewModel) }
-        binding.exit.setOnClickListener { requireActivity().finish() }
+
+        // Audio select
+        binding.audioSelect.setOnClickListener {
+            showSelectAudioDeviceDialog(viewModel)
+        }
+
+        // Exit call
+        binding.exit.setOnClickListener {
+            finish()
+        }
     }
 
     override fun onResume() {
@@ -142,7 +159,8 @@ class VideoCallFragment : BaseCallFragment() {
         lifecycleScope.launchWhenResumed {
             viewModel.error.collect {
                 it?.let {
-                    Toast.makeText(requireContext(), "Error: $it", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@VideoCallActivity, "Error: $it", Toast.LENGTH_LONG).show()
+                    Log.e("VideoCallActivity", "Error: $it")
                     viewModel.dismissError()
                 }
             }
@@ -150,22 +168,21 @@ class VideoCallFragment : BaseCallFragment() {
 
         lifecycleScope.launchWhenResumed {
             viewModel.dataReceived.collect {
-                Toast.makeText(requireContext(), "Data received: $it", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@VideoCallActivity, "Data received: $it", Toast.LENGTH_LONG).show()
             }
         }
     }
 
-    override fun onDestroyView() {
-        binding.audienceRow.adapter = null
-        binding.speakerView.adapter = null
-        _binding = null
-        super.onDestroyView()
-    }
-
     private fun requestMediaProjection() {
         val mediaProjectionManager =
-            requireContext().getSystemService(Activity.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+            getSystemService(MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         screenCaptureIntentLauncher.launch(mediaProjectionManager.createScreenCaptureIntent())
+    }
+
+    override fun onDestroy() {
+        binding.audienceRow.adapter = null
+        binding.speakerView.adapter = null
+        super.onDestroy()
     }
 
     companion object {
@@ -178,6 +195,6 @@ class VideoCallFragment : BaseCallFragment() {
         val token: String,
         val e2eeKey: String,
         val e2eeOn: Boolean,
-        val stressTest: StressTest
+        val stressTest: StressTest,
     ) : Parcelable
 }

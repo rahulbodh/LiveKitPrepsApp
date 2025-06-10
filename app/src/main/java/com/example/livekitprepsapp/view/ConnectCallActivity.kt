@@ -42,10 +42,10 @@ class ConnectCallActivity : AppCompatActivity() {
         val e2EEOn = viewModel.getE2EEOptionsOn()
         val e2EEKey = viewModel.getSavedE2EEKey()
 
-        val intent = Intent(this@ConnectCallActivity, CallActivity::class.java).apply {
+        val intent = Intent(this@ConnectCallActivity, VideoCallActivity::class.java).apply {
             putExtra(
-                CallActivity.KEY_ARGS,
-                CallActivity.BundleArgs(
+                VideoCallActivity.KEY_ARGS,
+                VideoCallActivity.BundleArgs(
                     url = urlString,
                     token = tokenString,
                     e2eeOn = e2EEOn,

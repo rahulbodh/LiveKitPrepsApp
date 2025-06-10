@@ -16,9 +16,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.livekitprepsapp.R
 import com.example.livekitprepsapp.databinding.ActivityMainBinding
-import com.example.livekitprepsapp.model.CallArgs
 import com.example.livekitprepsapp.model.StressTest
-import com.example.livekitprepsapp.utils.ForegroundService
 import com.example.livekitprepsapp.viewModels.MainViewModel
 import com.google.firebase.messaging.FirebaseMessaging
 
@@ -49,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         val tokenString = viewModel.getSavedToken()
         val e2EEOn = viewModel.getE2EEOptionsOn()
         val e2EEKey = viewModel.getSavedE2EEKey()
+        val videoCall = true
 
 //        val serviceIntent = Intent(this, ForegroundService::class.java).apply {
 //            putExtra("callerName", "Alice")
@@ -63,15 +62,23 @@ class MainActivity : AppCompatActivity() {
             e2eeEnabled.isChecked = e2EEOn
             e2eeKey.editText?.text = SpannableStringBuilder(e2EEKey)
 
-
             connectButton.setOnClickListener {
-                val args = CallArgs("audio", "3rsdlkfjsldf", "room_1")
-                val intent = Intent(this@MainActivity, CallingFlowActivity::class.java)
-                    .putExtra(
-                        "args", args
+                val intent = Intent(this@MainActivity, VideoCallActivity::class.java).apply {
+                    putExtra(
+                        VideoCallActivity.KEY_ARGS,
+                        VideoCallActivity.BundleArgs(
+                            url = url.editText?.text.toString(),
+                            token = token.editText?.text.toString(),
+                            e2eeOn = e2eeEnabled.isChecked,
+                            e2eeKey = e2eeKey.editText?.text.toString(),
+                            stressTest = StressTest.None,
+                        ),
                     )
+                }
+
                 startActivity(intent)
             }
+
 
             saveButton.setOnClickListener {
                 viewModel.setSavedUrl(url.editText?.text?.toString() ?: "")

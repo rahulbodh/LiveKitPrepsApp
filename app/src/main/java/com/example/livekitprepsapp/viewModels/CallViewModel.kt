@@ -58,6 +58,7 @@ class CallViewModel(
     application: Application,
     val e2ee: Boolean = false,
     val e2eeKey: String? = "",
+    val videoCall : Boolean,
     val audioProcessorOptions: AudioProcessorOptions? = null,
     val stressTest: StressTest = StressTest.None,
 ) : AndroidViewModel(application) {
@@ -236,9 +237,13 @@ class CallViewModel(
 
             // Create and publish audio/video tracks
             val localParticipant = room.localParticipant
-            localParticipant.setMicrophoneEnabled(true)
 
-            localParticipant.setCameraEnabled(true)
+            localParticipant.setMicrophoneEnabled(true)
+            if(videoCall){
+                localParticipant.setCameraEnabled(true)
+            }else{
+                localParticipant.setCameraEnabled(false)
+            }
 
             // Update the speaker
             handlePrimarySpeaker(emptyList(), emptyList(), room)
