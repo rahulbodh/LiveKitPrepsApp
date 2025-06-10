@@ -52,7 +52,7 @@ import kotlinx.coroutines.launch
 import livekit.org.webrtc.CameraXHelper
 import timber.log.Timber
 
-class CallViewModel(
+class   CallViewModel(
     val url: String,
     val token: String,
     application: Application,

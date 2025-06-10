@@ -42,19 +42,19 @@ class ConnectCallActivity : AppCompatActivity() {
         val e2EEOn = viewModel.getE2EEOptionsOn()
         val e2EEKey = viewModel.getSavedE2EEKey()
 
-        val intent = Intent(this@ConnectCallActivity, VideoCallActivity::class.java).apply {
-            putExtra(
-                VideoCallActivity.KEY_ARGS,
-                VideoCallActivity.BundleArgs(
-                    url = urlString,
-                    token = tokenString,
-                    e2eeOn = e2EEOn,
-                    e2eeKey = e2EEKey,
-                    stressTest = StressTest.None,
-                ),
-            )
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
+//        val intent = Intent(this@ConnectCallActivity, VideoCallActivity::class.java).apply {
+//            putExtra(
+//                VideoCallActivity.KEY_ARGS,
+//                VideoCallActivity.BundleArgs(
+//                    url = urlString,
+//                    token = tokenString,
+//                    e2eeOn = e2EEOn,
+//                    e2eeKey = e2EEKey,
+//                    stressTest = StressTest.None,
+//                ),
+//            )
+//                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+//        }
 
         Handler().postDelayed(
             {

@@ -3,6 +3,8 @@ package com.example.livekitprepsapp.view
 import android.app.Activity
 import android.media.projection.MediaProjectionManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.Parcelable
 import android.util.Log
 import android.view.WindowManager
@@ -24,8 +26,10 @@ import com.example.livekitprepsapp.viewModels.viewModelByFactory
 import com.xwray.groupie.GroupieAdapter
 import io.livekit.android.room.participant.LocalParticipant
 import io.livekit.android.room.participant.Participant
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import java.util.concurrent.TimeUnit
 
 class AudioCallActivity : AppCompatActivity() {
 
@@ -41,6 +45,35 @@ class AudioCallActivity : AppCompatActivity() {
             application = application,
             videoCall = false
         )
+    }
+
+    private val handler = Handler(Looper.getMainLooper())
+    private var isCallTimerRunning = false
+    private var callStartTimeMillis: Long = 0
+
+    // Runnable to update the call timer display every second
+    private val updateCallTimeRunnable = object : Runnable {
+        override fun run() {
+            if (isCallTimerRunning) {
+                val currentTimeMillis = System.currentTimeMillis()
+                val elapsedTimeMillis = currentTimeMillis - callStartTimeMillis
+
+                // Calculate hours, minutes, and seconds using TimeUnit for clarity
+                val hours = TimeUnit.MILLISECONDS.toHours(elapsedTimeMillis)
+                val minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTimeMillis) % 60
+                val seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedTimeMillis) % 60
+
+                // Format the time string (HH:MM:SS if hours > 0, otherwise MM:SS)
+                binding.statusText.text = if (hours > 0) {
+                    String.format("%02d:%02d:%02d", hours, minutes, seconds)
+                } else {
+                    String.format("%02d:%02d", minutes, seconds)
+                }
+
+                // Schedule the next update in 1 second (1000 milliseconds)
+                handler.postDelayed(this, 1000)
+            }
+        }
     }
 
     private lateinit var binding: ActivityAudioCallBinding
@@ -95,6 +128,12 @@ class AudioCallActivity : AppCompatActivity() {
 //                        ParticipantItem(viewModel.room, it)
 //                    }
 //                    audienceAdapter.update(audienceItems)
+
+                    if(remoteParticipant != null){
+                        startCallTimer()
+                    }else{
+                        stopCallTimer()
+                    }
 //
 //                    val speakerItems = listOfNotNull(remoteParticipant).map {
 //                        ParticipantItem(viewModel.room, it)
@@ -103,7 +142,6 @@ class AudioCallActivity : AppCompatActivity() {
                 }
             }
         }
-
 
 
 //
@@ -152,6 +190,21 @@ class AudioCallActivity : AppCompatActivity() {
         // Exit call
         binding.rejectButton.setOnClickListener {
             finish()
+        }
+    }
+
+    private fun CoroutineScope.stopCallTimer() {
+        if (isCallTimerRunning) {
+            isCallTimerRunning = false
+            handler.removeCallbacks(updateCallTimeRunnable) // Stop any pending updates
+        }
+    }
+
+    private fun CoroutineScope.startCallTimer() {
+        if (!isCallTimerRunning) {
+            isCallTimerRunning = true
+            callStartTimeMillis = System.currentTimeMillis() // Record the start time
+            handler.post(updateCallTimeRunnable) // Start posting the runnable
         }
     }
 
