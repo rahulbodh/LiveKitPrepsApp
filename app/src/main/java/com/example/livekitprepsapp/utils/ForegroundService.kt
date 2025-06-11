@@ -97,22 +97,30 @@ class ForegroundService : Service() {
             .setOngoing(true)
             .setAutoCancel(false)
             .setPriority(Notification.PRIORITY_HIGH)
-            .setFullScreenIntent(fullScreenPendingIntent, true)
-            .setStyle(
-                Notification.CallStyle.forIncomingCall(
-                    person,
-                    declinePendingIntent,
-                    answerPendingIntent
+
+        if (isIncomingCall) {
+            // Heads-up only for incoming calls
+            builder.setFullScreenIntent(fullScreenPendingIntent, true)
+                .setStyle(
+                    Notification.CallStyle.forIncomingCall(
+                        person,
+                        declinePendingIntent,
+                        answerPendingIntent
+                    )
                 )
-            )
-            .setStyle(
+        } else {
+            // No heads-up for outgoing/ongoing calls
+            builder.setFullScreenIntent(fullScreenPendingIntent ,false)
+            builder.setStyle(
                 Notification.CallStyle.forOngoingCall(
                     person,
                     hangUpPendingIntent
                 )
             )
+        }
 
-            val notification = builder.build()
+
+        val notification = builder.build()
             notification.flags = notification.flags or Notification.FLAG_ONGOING_EVENT
             startForeground(DEFAULT_NOTIFICATION_ID, notification  , ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL)
             Log.d("ForegroundService", "Notification shoot")
