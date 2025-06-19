@@ -37,9 +37,7 @@
             android:name=".view.AudioCallActivity"
             android:exported="false"
             android:theme="@style/Theme.LiveKitPrepsApp" />
-        <activity
-            android:name=".view.CallingFlowActivity"
-            android:exported="false" />
+
         <activity
             android:name=".view.ConnectCallActivity"
             android:exported="false" />
